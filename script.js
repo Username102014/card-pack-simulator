@@ -8,11 +8,11 @@ const gradients = [
   { name: "Ember Ashes", chance: 5, image: "ember.png" },
   { name: "Gummy Worm", chance: 5, image: "gummy.png" },
   { name: "Eclipse", chance: 2.5, image: "eclipse.png" },
-  { name: "Infinity Eye", chance: 1.5, image: "infinity.png" }
+  { name: "Infinity Eye", chance: 0, image: "infinity.png" } // chance handled separately
 ];
 
 let rolls = [];
-let infinityEyeRolled = false;
+let totalPacksOpened = 0;
 
 function rollGradient() {
   const totalChance = gradients.reduce((sum, g) => sum + g.chance, 0);
@@ -23,20 +23,18 @@ function rollGradient() {
     cumulative += g.chance;
     if (rand < cumulative) {
       rolls.push(g.name);
-      if (g.name === "Infinity Eye") infinityEyeRolled = true;
       return g;
     }
   }
 }
 
-function forceInfinityEye() {
-  if (!infinityEyeRolled && rolls.length >= 65) {
+function maybeAddInfinityEye(pack) {
+  const chance = Math.random();
+  if (chance < 0.005) {
     const g = gradients.find(g => g.name === "Infinity Eye");
+    pack.push(g);
     rolls.push(g.name);
-    infinityEyeRolled = true;
-    return g;
   }
-  return null;
 }
 
 function openPack() {
@@ -44,22 +42,39 @@ function openPack() {
   for (let i = 0; i < 7; i++) {
     pack.push(rollGradient());
   }
-  const forced = forceInfinityEye();
-  if (forced) pack.push(forced);
-  displayPack(pack);
+  maybeAddInfinityEye(pack);
+  totalPacksOpened++;
+  return pack;
 }
 
-function displayPack(pack) {
+function startPackAnimation() {
+  const rip = document.getElementById("ripAnimation");
   const wrapper = document.getElementById("packWrapper");
-  wrapper.innerHTML = ""; // Clear previous pack
+  wrapper.innerHTML = "";
+  rip.classList.remove("hidden");
 
-  pack.forEach(card => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `
-      <img src="${card.image}" alt="${card.name}" />
-      <p>${card.name}</p>
-    `;
-    wrapper.appendChild(div);
+  setTimeout(() => {
+    rip.classList.add("hidden");
+    const pack = openPack();
+    revealCards(pack);
+  }, 1500);
+}
+
+function revealCards(pack) {
+  const wrapper = document.getElementById("packWrapper");
+
+  pack.forEach((card, index) => {
+    setTimeout(() => {
+      const div = document.createElement("div");
+      div.className = "card";
+      div.style.animationDelay = `${index * 0.2}s`;
+      div.style.opacity = 1;
+      div.innerHTML = `
+        <img src="${card.image}" alt="${card.name}" />
+        <p>${card.name}</p>
+      `;
+      wrapper.appendChild(div);
+    }, index * 300);
   });
 }
+
