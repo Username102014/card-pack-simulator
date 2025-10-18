@@ -16,7 +16,6 @@ let rolls = [];
 let totalPacksOpened = 0;
 let currentPack = [];
 let revealedCards = [];
-let discoCount = 0;
 
 function rollGradient() {
   const totalChance = gradients.reduce((sum, g) => sum + g.chance, 0);
@@ -89,15 +88,6 @@ function showCard(index) {
   div.className = "card";
   div.innerHTML = `<img src="${card.image}" alt="${card.name}" />`;
 
-  const nextCard = currentPack[index + 1];
-  if (nextCard) {
-    const nextDiv = document.createElement("div");
-    nextDiv.className = "card";
-    nextDiv.style.opacity = "0";
-    nextDiv.innerHTML = `<img src="${nextCard.image}" alt="${nextCard.name}" />`;
-    stage.appendChild(nextDiv);
-  }
-
   div.onclick = () => {
     div.classList.add("animate");
     revealedCards.push(card);
@@ -109,5 +99,14 @@ function showCard(index) {
   stage.appendChild(div);
 }
 
+function displayFullPack() {
+  const wrapper = document.getElementById("packWrapper");
+  wrapper.classList.remove("hidden");
 
-
+  revealedCards.forEach(card => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `<img src="${card.image}" alt="${card.name}" />`;
+    wrapper.appendChild(div);
+  });
+}
