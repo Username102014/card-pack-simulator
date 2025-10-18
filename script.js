@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ Script loaded and DOM ready");
+  console.log("✅ Script ready");
 
+  // === Card data ===
   const gradients = [
     { name: "Cornflower Breeze", chance: 28, image: "images/cornflower.png" },
     { name: "Tropic Rise", chance: 15, image: "images/tropic.png" },
@@ -15,219 +16,173 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const infinityEye = { name: "Infinity Eye", chance: 1.5, image: "images/infinity.png" };
 
-  // --- SELL PRICE + MPS CALC ---
-  function calculateSellData(cards) {
-    const sorted = [...cards, infinityEye].sort((a, b) => b.chance - a.chance);
-    const inverted = [...sorted].reverse();
-
-    sorted.forEach((card, i) => {
-      const invChance = inverted[i].chance;
-      const sellPrice = invChance * 100000;
-      const mps = Math.ceil(sellPrice / 56);
-      card.sellPrice = sellPrice;
-      card.mps = mps;
+  // === Compute Sell Prices ===
+  function computeSellPrices() {
+    const all = [...gradients, infinityEye];
+    const sortedDesc = all.slice().sort((a, b) => b.chance - a.chance);
+    const sortedAsc = sortedDesc.slice().reverse();
+    sortedDesc.forEach((card, i) => {
+      const inv = sortedAsc[i];
+      card.sellPrice = Math.round(inv.chance * 100000);
+      card.mps = Math.ceil(card.sellPrice / 56);
     });
   }
-  calculateSellData(gradients);
+  computeSellPrices();
 
-  // --- VARIABLES ---
-  let totalPacksOpened = 0;
-  let currentPack = [];
-  let revealedCards = [];
-  let inventory = [];
-  let autosellList = new Set();
+  // === Game State ===
   let coins = 0;
   let moneyPerSecond = 0;
+  let inventory = [];
+  let autosell = new Set();
+  let currentPack = [];
+  let totalPacksOpened = 0;
+
   const MAX_INVENTORY = 30;
 
+  // === DOM Elements ===
   const openBtn = document.getElementById("openBtn");
   const inventoryBtn = document.getElementById("inventoryBtn");
   const autosellBtn = document.getElementById("autosellBtn");
   const sellSelectedBtn = document.getElementById("sellSelectedBtn");
   const closeAutosellBtn = document.getElementById("closeAutosellBtn");
 
-  openBtn.onclick = startPackAnimation;
-  inventoryBtn.onclick = toggleInventory;
-  autosellBtn.onclick = toggleAutosellPanel;
-  sellSelectedBtn.onclick = sellSelectedCards;
-  closeAutosellBtn.onclick = toggleAutosellPanel;
+  const coinsEl = document.getElementById("coins");
+  const mpsEl = document.getElementById("mps");
+  const inventoryPanel = document.getElementById("inventoryPanel");
+  const autosellPanel = document.getElementById("autosellPanel");
+  const inventoryList = document.getElementById("inventoryList");
+  const autosellList = document.getElementById("autosellList");
+  const ripOverlay = document.getElementById("ripOverlay");
+  const cardStage = document.getElementById("cardStage");
+  const packWrapper = document.getElementById("packWrapper");
 
-  // --- CARD ROLLING ---
+  // === Utility ===
+  function updateStats() {
+    coinsEl.textContent = coins.toLocaleString();
+    mpsEl.textContent = moneyPerSecond.toLocaleString();
+  }
+
   function rollGradient() {
-    const totalChance = gradients.reduce((sum, g) => sum + g.chance, 0);
-    const rand = Math.random() * totalChance;
-    let cumulative = 0;
-    for (let g of gradients) {
-      cumulative += g.chance;
-      if (rand < cumulative) return g;
+    const total = gradients.reduce((s, g) => s + g.chance, 0);
+    const rand = Math.random() * total;
+    let sum = 0;
+    for (const g of gradients) {
+      sum += g.chance;
+      if (rand <= sum) return g;
     }
     return gradients[0];
   }
 
-  function spinForInfinityEye() {
-    if (totalPacksOpened < 3) return null;
-    if (totalPacksOpened % 5 === 0 && Math.random() < 0.01) return infinityEye;
-    return null;
-  }
+  // === Pack Open Logic ===
+  openBtn.onclick = () => {
+    ripOverlay.classList.remove("hidden");
+    cardStage.innerHTML = "";
+    packWrapper.innerHTML = "";
+    setTimeout(() => {
+      ripOverlay.classList.add("hidden");
+      currentPack = [];
+      totalPacksOpened++;
 
-  function openPack() {
-    totalPacksOpened++;
-    const pack = [];
-    for (let i = 0; i < 7; i++) {
-      const card = rollGradient();
-      handleCardAdd(card, pack);
-    }
-    const special = spinForInfinityEye();
-    if (special) handleCardAdd(special, pack);
-    updateInventoryDisplay();
-    updateStats();
-    return pack;
-  }
+      for (let i = 0; i < 7; i++) {
+        const card = rollGradient();
+        processCard(card);
+      }
 
-  function handleCardAdd(card, pack) {
-    if (autosellList.has(card.name)) {
+      const special = totalPacksOpened >= 3 && Math.random() < 0.01 ? infinityEye : null;
+      if (special) processCard(special);
+
+      displayPack();
+      updateStats();
+    }, 1200);
+  };
+
+  function processCard(card) {
+    if (autosell.has(card.name)) {
       coins += card.sellPrice;
       moneyPerSecond += card.mps;
     } else if (inventory.length < MAX_INVENTORY) {
       inventory.push({ ...card, selected: false });
+    } else {
+      coins += card.sellPrice;
     }
-    pack.push(card);
+    currentPack.push(card);
   }
 
-  // --- UI + ANIMATIONS ---
-  function startPackAnimation() {
-    const overlay = document.getElementById("ripOverlay");
-    const stage = document.getElementById("cardStage");
-    const wrapper = document.getElementById("packWrapper");
-
-    stage.innerHTML = "";
-    wrapper.innerHTML = "";
-    wrapper.classList.add("hidden");
-    overlay.classList.remove("hidden");
-    revealedCards = [];
-
-    setTimeout(() => {
-      overlay.classList.add("hidden");
-      currentPack = openPack();
-      showCard(0);
-    }, 2000);
-  }
-
-  function showCard(index) {
-    const stage = document.getElementById("cardStage");
-    stage.innerHTML = "";
-
-    if (index >= currentPack.length) {
-      displayFullPack();
-      return;
-    }
-
-    const card = currentPack[index];
-    const frontDiv = document.createElement("div");
-    frontDiv.className = "card flip-in";
-    frontDiv.innerHTML = `
-      <img src="${card.image}" alt="${card.name}" />
-      <p>${card.name}</p>
-    `;
-    frontDiv.onclick = () => {
-      frontDiv.classList.add("animate");
-      revealedCards.push(card);
-      setTimeout(() => showCard(index + 1), 600);
-    };
-    stage.appendChild(frontDiv);
-  }
-
-  function displayFullPack() {
-    const wrapper = document.getElementById("packWrapper");
-    wrapper.classList.remove("hidden");
-    revealedCards.forEach(card => {
+  // === Display ===
+  function displayPack() {
+    packWrapper.classList.remove("hidden");
+    packWrapper.innerHTML = "";
+    currentPack.forEach(card => {
       const div = document.createElement("div");
       div.className = "card";
       div.innerHTML = `
-        <img src="${card.image}" alt="${card.name}" />
+        <img src="${card.image}" alt="${card.name}" onerror="this.src='images/fallback.png'">
         <p>${card.name}</p>
       `;
-      wrapper.appendChild(div);
+      packWrapper.appendChild(div);
     });
+    updateInventory();
   }
 
   function toggleInventory() {
-    const panel = document.getElementById("inventoryPanel");
-    panel.classList.toggle("hidden");
-    updateInventoryDisplay();
+    inventoryPanel.classList.toggle("hidden");
+    updateInventory();
   }
 
   function toggleAutosellPanel() {
-    const panel = document.getElementById("autosellPanel");
-    panel.classList.toggle("hidden");
+    autosellPanel.classList.toggle("hidden");
     updateAutosellList();
   }
 
-  // --- INVENTORY DISPLAY ---
-  function updateInventoryDisplay() {
-    const list = document.getElementById("inventoryList");
-    list.innerHTML = "";
+  function updateInventory() {
+    inventoryList.innerHTML = "";
     inventory.forEach((card, i) => {
-      const cardDiv = document.createElement("div");
-      cardDiv.className = `card ${card.selected ? "selected" : ""}`;
-      cardDiv.innerHTML = `
-        <img src="${card.image}" alt="${card.name}" />
-        <p>${card.name}</p>
-        <p>💵 ${card.sellPrice.toLocaleString()}</p>
-      `;
-      cardDiv.onclick = () => {
-        card.selected = !card.selected;
-        updateInventoryDisplay();
-      };
-      list.appendChild(cardDiv);
-    });
-  }
-
-  // --- AUTOSELL SETTINGS ---
-  function updateAutosellList() {
-    const list = document.getElementById("autosellList");
-    list.innerHTML = "";
-    [...gradients, infinityEye].forEach(card => {
       const div = document.createElement("div");
-      const isSelected = autosellList.has(card.name);
-      div.className = `card ${isSelected ? "selected" : ""}`;
+      div.className = `card ${card.selected ? "selected" : ""}`;
       div.innerHTML = `
-        <img src="${card.image}" alt="${card.name}" />
+        <img src="${card.image}" alt="${card.name}" onerror="this.src='images/fallback.png'">
         <p>${card.name}</p>
         <p>💵 ${card.sellPrice.toLocaleString()}</p>
       `;
       div.onclick = () => {
-        if (autosellList.has(card.name)) autosellList.delete(card.name);
-        else autosellList.add(card.name);
+        card.selected = !card.selected;
+        updateInventory();
+      };
+      inventoryList.appendChild(div);
+    });
+  }
+
+  function updateAutosellList() {
+    autosellList.innerHTML = "";
+    [...gradients, infinityEye].forEach(card => {
+      const div = document.createElement("div");
+      const active = autosell.has(card.name);
+      div.className = `card ${active ? "selected" : ""}`;
+      div.innerHTML = `
+        <img src="${card.image}" alt="${card.name}" onerror="this.src='images/fallback.png'">
+        <p>${card.name}</p>
+        <p>💵 ${card.sellPrice.toLocaleString()}</p>
+      `;
+      div.onclick = () => {
+        if (autosell.has(card.name)) autosell.delete(card.name);
+        else autosell.add(card.name);
         updateAutosellList();
       };
-      list.appendChild(div);
+      autosellList.appendChild(div);
     });
   }
 
-  // --- SELL SELECTED ---
-  function sellSelectedCards() {
-    let sold = 0;
-    let earned = 0;
-    inventory = inventory.filter(card => {
-      if (card.selected) {
-        sold++;
-        earned += card.sellPrice;
-        moneyPerSecond += card.mps;
-        return false;
-      }
-      return true;
-    });
-    coins += earned;
-    updateInventoryDisplay();
+  sellSelectedBtn.onclick = () => {
+    const sellable = inventory.filter(c => c.selected);
+    const total = sellable.reduce((a, c) => a + c.sellPrice, 0);
+    const totalMps = sellable.reduce((a, c) => a + c.mps, 0);
+    coins += total;
+    moneyPerSecond += totalMps;
+    inventory = inventory.filter(c => !c.selected);
+    alert(`Sold ${sellable.length} cards for ${total.toLocaleString()} coins!`);
+    updateInventory();
     updateStats();
-    alert(`Sold ${sold} cards for ${earned.toLocaleString()} coins!`);
-  }
+  };
 
-  // --- STATS ---
-  function updateStats() {
-    document.getElementById("coins").textContent = coins.toLocaleString();
-    document.getElementById("mps").textContent = moneyPerSecond.toLocaleString();
-  }
+  closeAutosellBtn.onclick = toggleAutosellPanel;
 });
-
