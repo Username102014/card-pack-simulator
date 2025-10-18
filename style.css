@@ -1,87 +1,123 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
 body {
-  font-family: "Poppins", sans-serif;
-  background: radial-gradient(circle at top, #1a1a2b, #000);
-  color: #fff;
+  font-family: 'Poppins', sans-serif;
   text-align: center;
+  background: linear-gradient(135deg, #dcefff, #b5d8ff);
+  color: #222;
   margin: 0;
-  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#app {
+  max-width: 900px;
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  padding: 30px;
 }
 
 h1 {
-  color: cyan;
-  text-shadow: 0 0 10px #0ff;
+  font-size: 2.2em;
+  margin-bottom: 10px;
 }
 
 .stats {
   display: flex;
   justify-content: center;
-  gap: 30px;
-  margin-bottom: 15px;
-  font-size: 18px;
+  gap: 40px;
+  margin-bottom: 20px;
+  font-weight: 600;
 }
 
 .buttons {
-  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 25px;
 }
 
 button {
-  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  background: #4e91fc;
   border: none;
   color: white;
-  padding: 10px 20px;
+  padding: 12px 22px;
   border-radius: 10px;
   font-size: 16px;
+  font-weight: 600;
   cursor: pointer;
-  margin: 5px;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: background 0.3s, transform 0.15s;
 }
 
 button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 10px cyan;
+  background: #3678e8;
+  transform: translateY(-2px);
+}
+
+.secondary-btn {
+  background: #ccc;
+  color: #222;
+}
+
+.secondary-btn:hover {
+  background: #bbb;
+}
+
+.sell-btn {
+  background: #f45c43;
+}
+
+.sell-btn:hover {
+  background: #d9442e;
 }
 
 .card {
   display: inline-block;
-  margin: 10px;
-  border: 2px solid white;
-  border-radius: 10px;
-  background: linear-gradient(145deg, #222, #111);
-  transition: transform 0.4s, box-shadow 0.4s;
-  padding: 5px;
-  width: 120px;
-}
-
-.card:hover {
-  transform: scale(1.08);
-  box-shadow: 0 0 15px cyan;
-}
-
-.card.selected {
-  border-color: lime;
-  box-shadow: 0 0 15px lime;
+  margin: 5px;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fdfdfd;
+  transition: transform 0.3s, box-shadow 0.3s;
+  width: 80px;
+  height: 80px;
 }
 
 .card img {
-  width: 100px;
-  height: 100px;
-  border-radius: 8px;
-  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.card.selected {
+  border: 2px solid #4e91fc;
+  box-shadow: 0 0 10px #4e91fc;
 }
 
 .inventory-list {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  margin-top: 10px;
+  margin-top: 20px;
 }
 
-.panel {
-  background: rgba(20, 20, 30, 0.9);
-  border: 2px solid cyan;
-  border-radius: 15px;
-  padding: 20px;
-  margin-top: 20px;
+#inventorySearch {
+  padding: 10px 14px;
+  width: 80%;
+  margin: 10px auto;
+  display: block;
+  border-radius: 8px;
+  border: 1px solid #aaa;
+  font-size: 15px;
 }
 
 .overlay {
@@ -90,19 +126,39 @@ button:hover {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(30, 30, 30, 0.8);
+  color: white;
+  font-size: 36px;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: cyan;
-  font-size: 36px;
-  z-index: 100;
+  z-index: 10;
 }
 
 .hidden {
   display: none;
 }
 
-.sell-btn {
-  background: linear-gradient(90deg, #ff416c, #ff4b2b);
+.panel {
+  background: #f8f9fb;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 20px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.1);
+}
+
+.panel-actions {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.flip-in {
+  animation: flipIn 0.4s ease;
+}
+
+@keyframes flipIn {
+  from { transform: rotateY(90deg); opacity: 0; }
+  to { transform: rotateY(0); opacity: 1; }
 }
