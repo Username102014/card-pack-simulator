@@ -58,8 +58,12 @@ function openPack() {
 
 function startPackAnimation() {
   const overlay = document.getElementById("ripOverlay");
+  const stage = document.getElementById("cardStage");
   const wrapper = document.getElementById("packWrapper");
+
+  stage.innerHTML = "";
   wrapper.innerHTML = "";
+  wrapper.classList.add("hidden");
   overlay.classList.remove("hidden");
 
   setTimeout(() => {
@@ -71,19 +75,39 @@ function startPackAnimation() {
 }
 
 function showNextCard() {
-  const wrapper = document.getElementById("packWrapper");
+  const stage = document.getElementById("cardStage");
+  stage.innerHTML = "";
 
-  if (currentCardIndex >= currentPack.length) return;
+  if (currentCardIndex >= currentPack.length) {
+    displayFullPack();
+    return;
+  }
 
   const card = currentPack[currentCardIndex];
   const div = document.createElement("div");
   div.className = "card";
   div.innerHTML = `<img src="${card.image}" alt="${card.name}" />`;
+
   div.onclick = () => {
-    div.onclick = null;
-    currentCardIndex++;
-    showNextCard();
+    div.classList.add("clicked");
+    setTimeout(() => {
+      currentCardIndex++;
+      showNextCard();
+    }, 600);
   };
 
-  wrapper.appendChild(div);
+  stage.appendChild(div);
 }
+
+function displayFullPack() {
+  const wrapper = document.getElementById("packWrapper");
+  wrapper.classList.remove("hidden");
+
+  currentPack.forEach(card => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `<img src="${card.image}" alt="${card.name}" />`;
+    wrapper.appendChild(div);
+  });
+}
+
