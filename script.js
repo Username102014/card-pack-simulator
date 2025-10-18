@@ -89,7 +89,7 @@ function showCard(index) {
   div.innerHTML = `<img src="${card.image}" alt="${card.name}" />`;
 
   div.onclick = () => {
-    div.classList.add("slide-left");
+    div.classList.add("animate");
     revealedCards.push(card);
     setTimeout(() => {
       showCard(index + 1);
@@ -110,3 +110,4 @@ function displayFullPack() {
     wrapper.appendChild(div);
   });
 }
+
