@@ -1,31 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Gradient Pack Simulator</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8">
+  <title>Card Roller</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h1>🎴 Gradient Pack Opener</h1>
-  <button id="openBtn">Open Pack</button>
-  <button id="inventoryBtn">Inventory</button>
+  <div id="app">
+    <h1>🎴 Card Roller</h1>
+    <div class="buttons">
+      <button id="openBtn">Open Pack</button>
+      <button id="inventoryBtn">Toggle Inventory</button>
+    </div>
 
-  <div id="ripOverlay" class="rip-overlay hidden">
-    <div class="rip-effect">🛍️ Ripping pack...</div>
-  </div>
+    <div id="ripOverlay" class="overlay hidden">Opening Pack...</div>
 
-  <div id="cardStage" class="stage"></div>
-  <div id="packWrapper" class="wrapper hidden"></div>
+    <div id="cardStage"></div>
+    <div id="packWrapper" class="hidden"></div>
 
-  <div id="inventoryPanel" class="hidden">
-    <h2>🗃️ Inventory (Max 30)</h2>
-    <div id="inventoryList"></div>
-
-    <h3>⚙️ Autosell Settings</h3>
-    <div id="autosellSettings"></div>
+    <div id="inventoryPanel" class="hidden">
+      <h2>Your Inventory</h2>
+      <div id="inventoryList" class="inventory-list"></div>
+    </div>
   </div>
 
   <script src="script.js"></script>
 </body>
 </html>
+
