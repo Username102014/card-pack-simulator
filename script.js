@@ -141,4 +141,33 @@ function toggleInventory() {
 }
 
 function updateInventoryDisplay() {
-  const list = document.get
+  const list = document.getElementById("inventoryList");
+  list.innerHTML = "";
+  inventory.forEach(card => {
+    const div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = `<img src="${card.image}" alt="${card.name}" title="${card.name}" />`;
+    list.appendChild(div);
+  });
+
+  const settings = document.getElementById("autosellSettings");
+  settings.innerHTML = "";
+  const allCards = [...new Set([...gradients, infinityEye].map(c => c.name))];
+  allCards.forEach(name => {
+    const label = document.createElement("label");
+    label.innerHTML = `
+      <input type="checkbox" onchange="toggleAutosell('${name}')" ${autosellList.has(name) ? "checked" : ""}>
+      ${name}
+    `;
+    settings.appendChild(label);
+  });
+}
+
+function toggleAutosell(name) {
+  if (autosellList.has(name)) {
+    autosellList.delete(name);
+  } else {
+    autosellList.add(name);
+  }
+}
+
