@@ -33,9 +33,9 @@ function rollGradient() {
 
 function spinForInfinityEye() {
   if (totalPacksOpened < 3) return null;
-  if (totalPacksOpened % 10 === 0) {
+  if (totalPacksOpened % 5 === 0) {
     const chance = Math.random();
-    if (chance < 0.005) {
+    if (chance < 0.01) {
       rolls.push(infinityEye.name);
       return infinityEye;
     }
@@ -59,37 +59,31 @@ function openPack() {
 function startPackAnimation() {
   const overlay = document.getElementById("ripOverlay");
   const wrapper = document.getElementById("packWrapper");
-  const nextBtn = document.getElementById("nextCardBtn");
-
   wrapper.innerHTML = "";
   overlay.classList.remove("hidden");
-  nextBtn.classList.add("hidden");
 
   setTimeout(() => {
     overlay.classList.add("hidden");
     currentPack = openPack();
     currentCardIndex = 0;
-    nextBtn.classList.remove("hidden");
+    showNextCard();
   }, 2000);
 }
 
-function revealNextCard() {
-  if (currentCardIndex >= currentPack.length) {
-    document.getElementById("nextCardBtn").classList.add("hidden");
-    return;
-  }
+function showNextCard() {
+  const wrapper = document.getElementById("packWrapper");
+
+  if (currentCardIndex >= currentPack.length) return;
 
   const card = currentPack[currentCardIndex];
   const div = document.createElement("div");
   div.className = "card";
-  div.style.opacity = 1;
-  div.innerHTML = `
-    <img src="${card.image}" alt="${card.name}" />
-    <p>${card.name}</p>
-  `;
-  document.getElementById("packWrapper").appendChild(div);
-  currentCardIndex++;
+  div.innerHTML = `<img src="${card.image}" alt="${card.name}" />`;
+  div.onclick = () => {
+    div.onclick = null;
+    currentCardIndex++;
+    showNextCard();
+  };
+
+  wrapper.appendChild(div);
 }
-
-
-
