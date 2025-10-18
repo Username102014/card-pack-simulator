@@ -122,7 +122,3 @@ function displayFullPack() {
     wrapper.appendChild(div);
   });
 }
-
-
-
-
