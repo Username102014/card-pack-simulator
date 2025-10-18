@@ -83,20 +83,32 @@ function showCard(index) {
     return;
   }
 
-  const card = currentPack[index];
-  const div = document.createElement("div");
-  div.className = "card";
-  div.innerHTML = `<img src="${card.image}" alt="${card.name}" />`;
+  // Back card (next one)
+  const nextCard = currentPack[index + 1];
+  if (nextCard) {
+    const backDiv = document.createElement("div");
+    backDiv.className = "card";
+    backDiv.style.zIndex = "5";
+    backDiv.style.opacity = "0.5";
+    backDiv.innerHTML = `<img src="${nextCard.image}" alt="${nextCard.name}" />`;
+    stage.appendChild(backDiv);
+  }
 
-  div.onclick = () => {
-    div.classList.add("animate");
+  // Front card (current one)
+  const card = currentPack[index];
+  const frontDiv = document.createElement("div");
+  frontDiv.className = "card";
+  frontDiv.innerHTML = `<img src="${card.image}" alt="${card.name}" />`;
+
+  frontDiv.onclick = () => {
+    frontDiv.classList.add("animate");
     revealedCards.push(card);
     setTimeout(() => {
       showCard(index + 1);
     }, 600);
   };
 
-  stage.appendChild(div);
+  stage.appendChild(frontDiv);
 }
 
 function displayFullPack() {
