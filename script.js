@@ -102,7 +102,6 @@ function showCard(index) {
   div.onclick = () => {
     div.classList.add("animate");
     revealedCards.push(card);
-    playSound(card.name);
     setTimeout(() => {
       showCard(index + 1);
     }, 600);
@@ -111,9 +110,5 @@ function showCard(index) {
   stage.appendChild(div);
 }
 
-function playSound(name) {
-  const normal = document.getElementById("normalSound");
-  const special = document.getElementById("specialSound");
-  const disco = document.get
 
 
