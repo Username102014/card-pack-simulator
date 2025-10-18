@@ -67,7 +67,6 @@ function startPackAnimation() {
   wrapper.classList.add("hidden");
   overlay.classList.remove("hidden");
   revealedCards = [];
-  document.body.classList.remove("disco");
 
   setTimeout(() => {
     overlay.classList.add("hidden");
