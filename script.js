@@ -1,17 +1,19 @@
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("✅ Script loaded and DOM ready");
+
   const gradients = [
-    { name: "Cornflower Breeze", chance: 28, image: "cornflower.png" },
-    { name: "Tropic Rise", chance: 15, image: "tropic.png" },
-    { name: "Cyanide Frost", chance: 14, image: "cyanide.png" },
-    { name: "Nautic Frost", chance: 13, image: "nautic.png" },
-    { name: "Icestone", chance: 8, image: "icestone.png" },
-    { name: "Dakratade", chance: 8, image: "dakratade.png" },
-    { name: "Ember Ashes", chance: 5, image: "ember.png" },
-    { name: "Gummy Worm", chance: 5, image: "gummy.png" },
-    { name: "Eclipse", chance: 2.5, image: "eclipse.png" }
+    { name: "Cornflower Breeze", chance: 28, image: "images/cornflower.png" },
+    { name: "Tropic Rise", chance: 15, image: "images/tropic.png" },
+    { name: "Cyanide Frost", chance: 14, image: "images/cyanide.png" },
+    { name: "Nautic Frost", chance: 13, image: "images/nautic.png" },
+    { name: "Icestone", chance: 8, image: "images/icestone.png" },
+    { name: "Dakratade", chance: 8, image: "images/dakratade.png" },
+    { name: "Ember Ashes", chance: 5, image: "images/ember.png" },
+    { name: "Gummy Worm", chance: 5, image: "images/gummy.png" },
+    { name: "Eclipse", chance: 2.5, image: "images/eclipse.png" }
   ];
 
-  const infinityEye = { name: "Infinity Eye", image: "infinity.png" };
+  const infinityEye = { name: "Infinity Eye", image: "images/infinity.png" };
 
   let totalPacksOpened = 0;
   let currentPack = [];
@@ -20,8 +22,11 @@ document.addEventListener("DOMContentLoaded", () => {
   let autosellList = new Set();
   const MAX_INVENTORY = 30;
 
-  document.getElementById("openBtn").onclick = startPackAnimation;
-  document.getElementById("inventoryBtn").onclick = toggleInventory;
+  const openBtn = document.getElementById("openBtn");
+  const inventoryBtn = document.getElementById("inventoryBtn");
+
+  openBtn.onclick = startPackAnimation;
+  inventoryBtn.onclick = toggleInventory;
 
   function rollGradient() {
     const totalChance = gradients.reduce((sum, g) => sum + g.chance, 0);
@@ -31,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cumulative += g.chance;
       if (rand < cumulative) return g;
     }
-    return gradients[0]; // fallback
+    return gradients[0];
   }
 
   function spinForInfinityEye() {
@@ -143,4 +148,3 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 });
-
