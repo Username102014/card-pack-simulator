@@ -1,3 +1,8 @@
+document.addEventListener("DOMContentLoaded", () => {
+  document.getElementById("openBtn").onclick = startPackAnimation;
+  document.getElementById("inventoryBtn").onclick = toggleInventory;
+
+});
 const gradients = [
   { name: "Cornflower Breeze", chance: 28, image: "cornflower.png" },
   { name: "Tropic Rise", chance: 15, image: "tropic.png" },
