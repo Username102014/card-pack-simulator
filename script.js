@@ -128,4 +128,6 @@ document.addEventListener("DOMContentLoaded", () => {
     updateInventoryDisplay();
   }
 
-  function updateInventoryDisplay()
+  function updateInventoryDisplay() {
+    const list = document.getElementById("inventoryList");
+    list.inner
