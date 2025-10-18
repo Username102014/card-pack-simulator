@@ -8,11 +8,17 @@
 </head>
 <body>
   <div id="app">
-    <h1>🎴 Card Roller</h1>
+    <h1>Gradient Pack</h1>
+
+    <div class="stats">
+      <div>💰 Coins: <span id="coins">0</span></div>
+      <div>⏱️ Money/sec: <span id="mps">0</span></div>
+    </div>
 
     <div class="buttons">
       <button id="openBtn">Open Pack</button>
       <button id="inventoryBtn">Toggle Inventory</button>
+      <button id="autosellBtn">Autosell Settings</button>
     </div>
 
     <div id="ripOverlay" class="overlay hidden">Opening Pack...</div>
@@ -20,9 +26,19 @@
     <div id="cardStage"></div>
     <div id="packWrapper" class="hidden"></div>
 
+    <!-- Inventory Panel -->
     <div id="inventoryPanel" class="hidden">
       <h2>Your Inventory</h2>
       <div id="inventoryList" class="inventory-list"></div>
+      <button id="sellSelectedBtn" class="sell-btn">Sell Selected</button>
+    </div>
+
+    <!-- Autosell Settings -->
+    <div id="autosellPanel" class="hidden">
+      <h2>Autosell Settings</h2>
+      <p>Select cards that will automatically sell on pack open:</p>
+      <div id="autosellList" class="inventory-list"></div>
+      <button id="closeAutosellBtn">Close</button>
     </div>
   </div>
 </body>
