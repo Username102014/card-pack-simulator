@@ -29,11 +29,14 @@ function rollGradient() {
 }
 
 function maybeAddInfinityEye(pack) {
-  const chance = Math.random();
-  if (chance < 0.005) {
-    const g = gradients.find(g => g.name === "Infinity Eye");
-    pack.push(g);
-    rolls.push(g.name);
+  totalPacksOpened++;
+  if (totalPacksOpened % 10 === 0) {
+    const chance = Math.random();
+    if (chance < 0.005) {
+      const g = gradients.find(g => g.name === "Infinity Eye");
+      pack.push(g);
+      rolls.push(g.name);
+    }
   }
 }
 
@@ -43,21 +46,20 @@ function openPack() {
     pack.push(rollGradient());
   }
   maybeAddInfinityEye(pack);
-  totalPacksOpened++;
   return pack;
 }
 
 function startPackAnimation() {
-  const rip = document.getElementById("ripAnimation");
+  const overlay = document.getElementById("ripOverlay");
   const wrapper = document.getElementById("packWrapper");
   wrapper.innerHTML = "";
-  rip.classList.remove("hidden");
+  overlay.classList.remove("hidden");
 
   setTimeout(() => {
-    rip.classList.add("hidden");
+    overlay.classList.add("hidden");
     const pack = openPack();
     revealCards(pack);
-  }, 1500);
+  }, 2000);
 }
 
 function revealCards(pack) {
@@ -77,4 +79,5 @@ function revealCards(pack) {
     }, index * 300);
   });
 }
+
 
