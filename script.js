@@ -70,29 +70,29 @@ function startPackAnimation() {
     overlay.classList.add("hidden");
     currentPack = openPack();
     currentCardIndex = 0;
-    showNextCard();
+    showCard(currentCardIndex);
   }, 2000);
 }
 
-function showNextCard() {
+function showCard(index) {
   const stage = document.getElementById("cardStage");
   stage.innerHTML = "";
 
-  if (currentCardIndex >= currentPack.length) {
+  if (index >= currentPack.length) {
     displayFullPack();
     return;
   }
 
-  const card = currentPack[currentCardIndex];
+  const card = currentPack[index];
   const div = document.createElement("div");
   div.className = "card";
   div.innerHTML = `<img src="${card.image}" alt="${card.name}" />`;
 
   div.onclick = () => {
-    div.classList.add("clicked");
+    div.classList.add("slide-left");
     setTimeout(() => {
       currentCardIndex++;
-      showNextCard();
+      showCard(currentCardIndex);
     }, 600);
   };
 
@@ -110,4 +110,5 @@ function displayFullPack() {
     wrapper.appendChild(div);
   });
 }
+
 
