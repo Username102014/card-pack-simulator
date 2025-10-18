@@ -15,7 +15,8 @@ const infinityEye = { name: "Infinity Eye", image: "infinity.png" };
 let rolls = [];
 let totalPacksOpened = 0;
 let currentPack = [];
-let currentCardIndex = 0;
+let revealedCards = [];
+let discoCount = 0;
 
 function rollGradient() {
   const totalChance = gradients.reduce((sum, g) => sum + g.chance, 0);
@@ -33,7 +34,7 @@ function rollGradient() {
 
 function spinForInfinityEye() {
   if (totalPacksOpened < 3) return null;
-  if (totalPacksOpened % 10 === 0) {
+  if (totalPacksOpened % 5 === 0) {
     const chance = Math.random();
     if (chance < 0.01) {
       rolls.push(infinityEye.name);
@@ -58,36 +59,61 @@ function openPack() {
 
 function startPackAnimation() {
   const overlay = document.getElementById("ripOverlay");
+  const stage = document.getElementById("cardStage");
   const wrapper = document.getElementById("packWrapper");
+
+  stage.innerHTML = "";
   wrapper.innerHTML = "";
+  wrapper.classList.add("hidden");
   overlay.classList.remove("hidden");
+  revealedCards = [];
+  document.body.classList.remove("disco");
 
   setTimeout(() => {
     overlay.classList.add("hidden");
     currentPack = openPack();
-    currentCardIndex = 0;
-    showNextCard();
+    showCard(0);
   }, 2000);
 }
 
-function showNextCard() {
-  const wrapper = document.getElementById("packWrapper");
+function showCard(index) {
+  const stage = document.getElementById("cardStage");
+  stage.innerHTML = "";
 
-  if (currentCardIndex >= currentPack.length) {
+  if (index >= currentPack.length) {
+    displayFullPack();
     return;
   }
 
-  const card = currentPack[currentCardIndex];
+  const card = currentPack[index];
   const div = document.createElement("div");
   div.className = "card";
   div.innerHTML = `<img src="${card.image}" alt="${card.name}" />`;
+
+  const nextCard = currentPack[index + 1];
+  if (nextCard) {
+    const nextDiv = document.createElement("div");
+    nextDiv.className = "card";
+    nextDiv.style.opacity = "0";
+    nextDiv.innerHTML = `<img src="${nextCard.image}" alt="${nextCard.name}" />`;
+    stage.appendChild(nextDiv);
+  }
+
   div.onclick = () => {
-    div.onclick = null;
-    currentCardIndex++;
-    showNextCard();
+    div.classList.add("animate");
+    revealedCards.push(card);
+    playSound(card.name);
+    setTimeout(() => {
+      showCard(index + 1);
+    }, 600);
   };
 
-  wrapper.appendChild(div);
+  stage.appendChild(div);
 }
+
+function playSound(name) {
+  const normal = document.getElementById("normalSound");
+  const special = document.getElementById("specialSound");
+  const disco = document.get
 
 
