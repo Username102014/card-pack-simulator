@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
       cumulative += g.chance;
       if (rand < cumulative) return g;
     }
+    return gradients[0]; // fallback
   }
 
   function spinForInfinityEye() {
@@ -49,11 +50,13 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       pack.push(card);
     }
+
     const special = spinForInfinityEye();
     if (special && !autosellList.has(special.name) && inventory.length < MAX_INVENTORY) {
       inventory.push(special);
       pack.push(special);
     }
+
     updateInventoryDisplay();
     return pack;
   }
@@ -130,4 +133,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateInventoryDisplay() {
     const list = document.getElementById("inventoryList");
-    list.inner
+    list.innerHTML = "";
+
+    inventory.forEach(card => {
+      const cardDiv = document.createElement("div");
+      cardDiv.className = "card";
+      cardDiv.innerHTML = `<img src="${card.image}" alt="${card.name}" />`;
+      list.appendChild(cardDiv);
+    });
+  }
+});
+
