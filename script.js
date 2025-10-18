@@ -15,7 +15,7 @@ const infinityEye = { name: "Infinity Eye", image: "infinity.png" };
 let rolls = [];
 let totalPacksOpened = 0;
 let currentPack = [];
-let revealedCards = [];
+let currentCardIndex = 0;
 
 function rollGradient() {
   const totalChance = gradients.reduce((sum, g) => sum + g.chance, 0);
@@ -33,7 +33,7 @@ function rollGradient() {
 
 function spinForInfinityEye() {
   if (totalPacksOpened < 3) return null;
-  if (totalPacksOpened % 5 === 0) {
+  if (totalPacksOpened % 10 === 0) {
     const chance = Math.random();
     if (chance < 0.01) {
       rolls.push(infinityEye.name);
@@ -58,56 +58,36 @@ function openPack() {
 
 function startPackAnimation() {
   const overlay = document.getElementById("ripOverlay");
-  const stage = document.getElementById("cardStage");
   const wrapper = document.getElementById("packWrapper");
-
-  stage.innerHTML = "";
   wrapper.innerHTML = "";
-  wrapper.classList.add("hidden");
   overlay.classList.remove("hidden");
-  revealedCards = [];
 
   setTimeout(() => {
     overlay.classList.add("hidden");
     currentPack = openPack();
-    showCard(0);
+    currentCardIndex = 0;
+    showNextCard();
   }, 2000);
 }
 
-function showCard(index) {
-  const stage = document.getElementById("cardStage");
-  stage.innerHTML = "";
+function showNextCard() {
+  const wrapper = document.getElementById("packWrapper");
 
-  if (index >= currentPack.length) {
-    displayFullPack();
+  if (currentCardIndex >= currentPack.length) {
     return;
   }
 
-  const card = currentPack[index];
+  const card = currentPack[currentCardIndex];
   const div = document.createElement("div");
   div.className = "card";
   div.innerHTML = `<img src="${card.image}" alt="${card.name}" />`;
-
   div.onclick = () => {
-    div.classList.add("animate");
-    revealedCards.push(card);
-    setTimeout(() => {
-      showCard(index + 1);
-    }, 600);
+    div.onclick = null;
+    currentCardIndex++;
+    showNextCard();
   };
 
-  stage.appendChild(div);
+  wrapper.appendChild(div);
 }
 
-function displayFullPack() {
-  const wrapper = document.getElementById("packWrapper");
-  wrapper.classList.remove("hidden");
-
-  revealedCards.forEach(card => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `<img src="${card.image}" alt="${card.name}" />`;
-    wrapper.appendChild(div);
-  });
-}
 
