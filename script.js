@@ -123,5 +123,13 @@ function displayFullPack() {
 
 function toggleInventory() {
   const panel = document.getElementById("inventoryPanel");
-  panel.classList.toggle("hidden
+  panel.classList.toggle("hidden");
+  updateInventoryDisplay();
+}
+
+function updateInventoryDisplay() {
+  const list = document.getElementById("inventoryList");
+  list.innerHTML = "";
+  inventory.forEach(card => {
+    const div = document.createElement
 
