@@ -7,12 +7,15 @@ const gradients = [
   { name: "Dakratade", chance: 8, image: "dakratade.png" },
   { name: "Ember Ashes", chance: 5, image: "ember.png" },
   { name: "Gummy Worm", chance: 5, image: "gummy.png" },
-  { name: "Eclipse", chance: 2.5, image: "eclipse.png" },
-  { name: "Infinity Eye", chance: 0, image: "infinity.png" } // chance handled separately
+  { name: "Eclipse", chance: 2.5, image: "eclipse.png" }
 ];
+
+const infinityEye = { name: "Infinity Eye", image: "infinity.png" };
 
 let rolls = [];
 let totalPacksOpened = 0;
+let currentPack = [];
+let currentCardIndex = 0;
 
 function rollGradient() {
   const totalChance = gradients.reduce((sum, g) => sum + g.chance, 0);
@@ -28,56 +31,65 @@ function rollGradient() {
   }
 }
 
-function maybeAddInfinityEye(pack) {
-  totalPacksOpened++;
+function spinForInfinityEye() {
+  if (totalPacksOpened < 3) return null;
   if (totalPacksOpened % 10 === 0) {
     const chance = Math.random();
     if (chance < 0.005) {
-      const g = gradients.find(g => g.name === "Infinity Eye");
-      pack.push(g);
-      rolls.push(g.name);
+      rolls.push(infinityEye.name);
+      return infinityEye;
     }
   }
+  return null;
 }
 
 function openPack() {
+  totalPacksOpened++;
   const pack = [];
   for (let i = 0; i < 7; i++) {
     pack.push(rollGradient());
   }
-  maybeAddInfinityEye(pack);
+
+  const special = spinForInfinityEye();
+  if (special) pack.push(special);
+
   return pack;
 }
 
 function startPackAnimation() {
   const overlay = document.getElementById("ripOverlay");
   const wrapper = document.getElementById("packWrapper");
+  const nextBtn = document.getElementById("nextCardBtn");
+
   wrapper.innerHTML = "";
   overlay.classList.remove("hidden");
+  nextBtn.classList.add("hidden");
 
   setTimeout(() => {
     overlay.classList.add("hidden");
-    const pack = openPack();
-    revealCards(pack);
+    currentPack = openPack();
+    currentCardIndex = 0;
+    nextBtn.classList.remove("hidden");
   }, 2000);
 }
 
-function revealCards(pack) {
-  const wrapper = document.getElementById("packWrapper");
+function revealNextCard() {
+  if (currentCardIndex >= currentPack.length) {
+    document.getElementById("nextCardBtn").classList.add("hidden");
+    return;
+  }
 
-  pack.forEach((card, index) => {
-    setTimeout(() => {
-      const div = document.createElement("div");
-      div.className = "card";
-      div.style.animationDelay = `${index * 0.2}s`;
-      div.style.opacity = 1;
-      div.innerHTML = `
-        <img src="${card.image}" alt="${card.name}" />
-        <p>${card.name}</p>
-      `;
-      wrapper.appendChild(div);
-    }, index * 300);
-  });
+  const card = currentPack[currentCardIndex];
+  const div = document.createElement("div");
+  div.className = "card";
+  div.style.opacity = 1;
+  div.innerHTML = `
+    <img src="${card.image}" alt="${card.name}" />
+    <p>${card.name}</p>
+  `;
+  document.getElementById("packWrapper").appendChild(div);
+  currentCardIndex++;
 }
+
 
 
