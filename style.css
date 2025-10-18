@@ -1,45 +1,86 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Poppins', sans-serif;
   text-align: center;
-  background: #111;
+  background: radial-gradient(circle at top, #1e1e2f, #0a0a0f);
   color: white;
   margin: 0;
   padding: 20px;
+}
+
+h1 {
+  text-shadow: 0 0 10px cyan;
 }
 
 button {
   margin: 10px;
   padding: 10px 20px;
   font-size: 16px;
+  border: none;
+  border-radius: 10px;
   cursor: pointer;
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+  color: white;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px cyan;
+}
+
+.stats {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 15px;
+  font-size: 18px;
 }
 
 .card {
   display: inline-block;
   margin: 10px;
   border: 2px solid white;
-  border-radius: 8px;
+  border-radius: 12px;
   overflow: hidden;
-  background: #222;
-  transition: transform 0.6s;
+  background: linear-gradient(145deg, #222, #111);
+  transition: transform 0.4s, box-shadow 0.4s;
+  cursor: pointer;
+  width: 120px;
+  padding: 5px;
 }
 
 .card img {
   width: 100px;
   height: 100px;
+  border-radius: 8px;
+}
+
+.card p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.card:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 15px cyan;
+}
+
+.card.selected {
+  border-color: lime;
+  box-shadow: 0 0 15px lime;
 }
 
 .card.animate {
   transform: rotateY(180deg);
 }
 
-#cardStage {
-  margin-top: 20px;
-  height: 120px;
+.flip-in {
+  animation: flipIn 0.6s ease;
 }
 
-#packWrapper {
-  margin-top: 20px;
+@keyframes flipIn {
+  from { transform: rotateY(90deg); opacity: 0; }
+  to { transform: rotateY(0); opacity: 1; }
 }
 
 .inventory-list {
@@ -55,7 +96,7 @@ button {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0,0,0,0.85);
   color: white;
   font-size: 36px;
   display: flex;
@@ -68,5 +109,6 @@ button {
   display: none;
 }
 
-
-
+.sell-btn {
+  background: linear-gradient(90deg, #ff4e50, #f9d423);
+}
