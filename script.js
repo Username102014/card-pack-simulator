@@ -12,7 +12,6 @@ const gradients = [
 
 const infinityEye = { name: "Infinity Eye", image: "infinity.png" };
 
-let rolls = [];
 let totalPacksOpened = 0;
 let currentPack = [];
 let revealedCards = [];
@@ -20,29 +19,22 @@ let inventory = [];
 let autosellList = new Set();
 const MAX_INVENTORY = 30;
 
+document.getElementById("openBtn").onclick = startPackAnimation;
+document.getElementById("inventoryBtn").onclick = toggleInventory;
+
 function rollGradient() {
   const totalChance = gradients.reduce((sum, g) => sum + g.chance, 0);
   const rand = Math.random() * totalChance;
   let cumulative = 0;
-
   for (let g of gradients) {
     cumulative += g.chance;
-    if (rand < cumulative) {
-      rolls.push(g.name);
-      return g;
-    }
+    if (rand < cumulative) return g;
   }
 }
 
 function spinForInfinityEye() {
   if (totalPacksOpened < 3) return null;
-  if (totalPacksOpened % 5 === 0) {
-    const chance = Math.random();
-    if (chance < 0.01) {
-      rolls.push(infinityEye.name);
-      return infinityEye;
-    }
-  }
+  if (totalPacksOpened % 5 === 0 && Math.random() < 0.01) return infinityEye;
   return null;
 }
 
@@ -56,15 +48,11 @@ function openPack() {
     }
     pack.push(card);
   }
-
   const special = spinForInfinityEye();
-  if (special) {
-    if (!autosellList.has(special.name) && inventory.length < MAX_INVENTORY) {
-      inventory.push(special);
-    }
+  if (special && !autosellList.has(special.name) && inventory.length < MAX_INVENTORY) {
+    inventory.push(special);
     pack.push(special);
   }
-
   updateInventoryDisplay();
   return pack;
 }
@@ -125,7 +113,6 @@ function showCard(index) {
 function displayFullPack() {
   const wrapper = document.getElementById("packWrapper");
   wrapper.classList.remove("hidden");
-
   revealedCards.forEach(card => {
     const div = document.createElement("div");
     div.className = "card";
@@ -136,38 +123,5 @@ function displayFullPack() {
 
 function toggleInventory() {
   const panel = document.getElementById("inventoryPanel");
-  panel.classList.toggle("hidden");
-  updateInventoryDisplay();
-}
-
-function updateInventoryDisplay() {
-  const list = document.getElementById("inventoryList");
-  list.innerHTML = "";
-  inventory.forEach(card => {
-    const div = document.createElement("div");
-    div.className = "card";
-    div.innerHTML = `<img src="${card.image}" alt="${card.name}" title="${card.name}" />`;
-    list.appendChild(div);
-  });
-
-  const settings = document.getElementById("autosellSettings");
-  settings.innerHTML = "";
-  const allCards = [...new Set([...gradients, infinityEye].map(c => c.name))];
-  allCards.forEach(name => {
-    const label = document.createElement("label");
-    label.innerHTML = `
-      <input type="checkbox" onchange="toggleAutosell('${name}')" ${autosellList.has(name) ? "checked" : ""}>
-      ${name}
-    `;
-    settings.appendChild(label);
-  });
-}
-
-function toggleAutosell(name) {
-  if (autosellList.has(name)) {
-    autosellList.delete(name);
-  } else {
-    autosellList.add(name);
-  }
-}
+  panel.classList.toggle("hidden
 
