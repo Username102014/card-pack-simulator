@@ -3,6 +3,20 @@ body {
   text-align: center;
   padding: 50px;
   background-color: #f0f0f0;
+  overflow-x: hidden;
+  transition: background 0.5s ease;
+}
+
+body.disco {
+  background: linear-gradient(45deg, #ff00cc, #3333ff, #00ffcc, #ffcc00);
+  background-size: 400% 400%;
+  animation: discoFlash 2s infinite;
+}
+
+@keyframes discoFlash {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 button {
@@ -12,37 +26,60 @@ button {
   margin-top: 20px;
 }
 
-.wrapper {
+.stage {
+  position: relative;
+  height: 400px;
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
-  margin-top: 20px;
+  align-items: center;
+  margin-top: 40px;
 }
 
 .card {
-  width: 120px;
-  height: 180px;
-  margin: 10px;
-  border-radius: 10px;
-  background-color: transparent;
-  box-shadow: 0 0 10px rgba(0,0,0,0.2);
-  animation: flip 0.6s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 1;
+  width: 240px;
+  height: 360px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  transition: transform 0.6s ease, opacity 0.6s ease;
   cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
 }
 
 .card img {
   width: 100%;
   height: 100%;
-  border-radius: 10px;
+  border-radius: 12px;
 }
 
-@keyframes flip {
-  from { transform: rotateY(90deg); opacity: 0; }
-  to { transform: rotateY(0deg); opacity: 1; }
+.card.animate {
+  animation: slideLeftRight 0.6s ease forwards;
+}
+
+@keyframes slideLeftRight {
+  0% { transform: translateX(-50%) scale(1); opacity: 1; }
+  50% { transform: translateX(-150%) scale(0.9); opacity: 0.5; }
+  100% { transform: translateX(-50%) scale(1); opacity: 0; }
+}
+
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.wrapper .card {
+  width: 120px;
+  height: 180px;
+  margin: 10px;
+  position: static;
+  transform: none;
+  opacity: 1;
+  cursor: default;
 }
 
 .rip-overlay {
@@ -72,6 +109,7 @@ button {
 .hidden {
   display: none;
 }
+
 
 
 
