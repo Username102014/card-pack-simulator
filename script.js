@@ -15,7 +15,7 @@ const infinityEye = { name: "Infinity Eye", image: "infinity.png" };
 let rolls = [];
 let totalPacksOpened = 0;
 let currentPack = [];
-let currentCardIndex = 0;
+let revealedCards = [];
 
 function rollGradient() {
   const totalChance = gradients.reduce((sum, g) => sum + g.chance, 0);
@@ -65,12 +65,12 @@ function startPackAnimation() {
   wrapper.innerHTML = "";
   wrapper.classList.add("hidden");
   overlay.classList.remove("hidden");
+  revealedCards = [];
 
   setTimeout(() => {
     overlay.classList.add("hidden");
     currentPack = openPack();
-    currentCardIndex = 0;
-    showCard(currentCardIndex);
+    showCard(0);
   }, 2000);
 }
 
@@ -90,9 +90,9 @@ function showCard(index) {
 
   div.onclick = () => {
     div.classList.add("slide-left");
+    revealedCards.push(card);
     setTimeout(() => {
-      currentCardIndex++;
-      showCard(currentCardIndex);
+      showCard(index + 1);
     }, 600);
   };
 
@@ -103,12 +103,10 @@ function displayFullPack() {
   const wrapper = document.getElementById("packWrapper");
   wrapper.classList.remove("hidden");
 
-  currentPack.forEach(card => {
+  revealedCards.forEach(card => {
     const div = document.createElement("div");
     div.className = "card";
     div.innerHTML = `<img src="${card.image}" alt="${card.name}" />`;
     wrapper.appendChild(div);
   });
 }
-
-
