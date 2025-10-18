@@ -16,6 +16,9 @@ let rolls = [];
 let totalPacksOpened = 0;
 let currentPack = [];
 let revealedCards = [];
+let inventory = [];
+let autosellList = new Set();
+const MAX_INVENTORY = 30;
 
 function rollGradient() {
   const totalChance = gradients.reduce((sum, g) => sum + g.chance, 0);
@@ -47,12 +50,22 @@ function openPack() {
   totalPacksOpened++;
   const pack = [];
   for (let i = 0; i < 7; i++) {
-    pack.push(rollGradient());
+    const card = rollGradient();
+    if (!autosellList.has(card.name) && inventory.length < MAX_INVENTORY) {
+      inventory.push(card);
+    }
+    pack.push(card);
   }
 
   const special = spinForInfinityEye();
-  if (special) pack.push(special);
+  if (special) {
+    if (!autosellList.has(special.name) && inventory.length < MAX_INVENTORY) {
+      inventory.push(special);
+    }
+    pack.push(special);
+  }
 
+  updateInventoryDisplay();
   return pack;
 }
 
@@ -83,7 +96,6 @@ function showCard(index) {
     return;
   }
 
-  // Back card (next one)
   const nextCard = currentPack[index + 1];
   if (nextCard) {
     const backDiv = document.createElement("div");
@@ -94,7 +106,6 @@ function showCard(index) {
     stage.appendChild(backDiv);
   }
 
-  // Front card (current one)
   const card = currentPack[index];
   const frontDiv = document.createElement("div");
   frontDiv.className = "card";
@@ -122,3 +133,12 @@ function displayFullPack() {
     wrapper.appendChild(div);
   });
 }
+
+function toggleInventory() {
+  const panel = document.getElementById("inventoryPanel");
+  panel.classList.toggle("hidden");
+  updateInventoryDisplay();
+}
+
+function updateInventoryDisplay() {
+  const list = document.get
