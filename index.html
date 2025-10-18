@@ -7,8 +7,9 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1> Gradient Pack Opener</h1>
+  <h1>Gradient Pack Opener</h1>
   <button onclick="startPackAnimation()">Open Pack</button>
+  <button onclick="toggleInventory()">Inventory</button>
 
   <div id="ripOverlay" class="rip-overlay hidden">
     <div class="rip-effect">🛍️ Ripping pack...</div>
@@ -17,9 +18,18 @@
   <div id="cardStage" class="stage"></div>
   <div id="packWrapper" class="wrapper hidden"></div>
 
+  <div id="inventoryPanel" class="hidden">
+    <h2>🗃️ Inventory (Max 30)</h2>
+    <div id="inventoryList"></div>
+
+    <h3>⚙️ Autosell Settings</h3>
+    <div id="autosellSettings"></div>
+  </div>
+
   <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
